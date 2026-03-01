@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대구-경주 열차 시간표</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const initialKtxCsv = `방향,열차번호,종류,서대구,동대구,경주,운행일
+하행,1,KTX,,6:58,7:16,매일
+하행,3,KTX,,7:24,7:42,매일
+하행,7,KTX,,8:29,8:48,매일
+하행,13,KTX,,9:33,9:52,매일
+하행,15,KTX,,9:54,10:12,매일
+하행,121,KTX,,10:41,10:59,매일
+하행,21,KTX,,11:54,12:12,매일
+하행,123,KTX,,12:43,13:01,매일
+하행,25,KTX,,12:49,13:08,매일
+하행,27,KTX,,13:49,14:08,매일
+하행,31,KTX_산천,,15:00,15:19,매일
+하행,339,KTX,,15:28,15:46,매일
+하행,35,KTX,,15:49,16:07,매일
+하행,39,KTX-산천,,16:19,16:38,매일
+하행,87,KTX,,16:37,16:55,금토일
+하행,41,KTX,,16:55,17:13,매일
+하행,89,KTX-산천,,17:07,17:25,금토일
+하행,45,KTX,17:45,17:54,18:14,매일
+하행,49,KTX,,18:55,19:13,매일
+하행,51,KTX,,19:19,19:37,매일
+하행,57,KTX,,20:21,20:40,매일
+하행,91,KTX,,21:03,21:21,금토일
+하행,127,KTX,,21:28,21:46,매일
+하행,93,KTX,,21:42,22:01,금토일
+하행,177,KTX,,22:22,22:41,금토일
+하행,67,KTX,,22:53,23:12,매일
+하행,195,KTX-산천,,23:24,23:43,매일
+상행,82,KTX,,5:38,5:20,월
+상행,4,KTX,,6:06,5:47,매일
+상행,192,KTX-산천,,6:55,6:37,매일
+상행,8,KTX,,7:02,6:44,매일
+상행,84,KTX,7:24,7:14,6:56,금토일
+상행,170,KTX,,7:29,7:11,토일
+상행,12,KTX,8:25,8:15,7:57,매일
+상행,14,KTX,,8:58,8:40,매일
+상행,16,KTX,,9:32,9:14,매일
+상행,24,KTX,,10:43,10:24,매일
+상행,326,KTX,,11:26,11:08,매일
+상행,34,KTX,,13:57,13:38,매일
+상행,38,KTX,,15:07,14:48,매일
+상행,40,KTX,,15:24,15:06,매일
+상행,92,KTX,,15:53,15:35,금토일
+상행,46,KTX,,17:09,16:50,매일
+상행,48,KTX,,17:42,17:24,매일
+상행,52,KTX_산천,,18:13,17:55,매일
+상행,126,KTX,,18:43,18:25,매일
+상행,98,KTX-산천,,19:16,18:53,금토일
+상행,56,KTX,,19:25,19:07,매일
+상행,100,KTX,,20:31,20:13,금토일
+상행,194,KTX-산천,,20:31,20:13,월화수목
+상행,66,KTX,,21:53,21:35,매일
+상행,68,KTX,,22:21,22:03,매일
+상행,74,KTX,,22:57,22:38,매일`;
+
+        const initialSrtCsv = `방향,열차번호,종류,서대구,동대구,경주,운행일
+하행,301,SRT,,7:14,7:32,매일
+하행,303,SRT,,7:44,8:08,매일
+하행,305,SRT,,8:14,8:32,금토일
+하행,307,SRT,,8:44,9:02,매일
+하행,311,SRT,,9:10,9:28,매일
+하행,315,SRT,,10:00,10:18,매일
+하행,319,SRT,10:49,10:58,11:18,매일
+하행,321,SRT,,11:09,11:27,매일
+하행,327,SRT,,12:33,12:52,매일
+하행,329,SRT,,13:58,14:18,금토일
+하행,335,SRT,,14:48,15:06,매일
+하행,339,SRT,,15:28,15:46,매일
+하행,343,SRT,,16:47,17:06,매일
+하행,349,SRT,,18:01,18:20,매일
+하행,355,SRT,19:02,19:11,19:30,매일
+하행,357,SRT,,19:37,19:56,매일
+하행,359,SRT,,20:14,20:32,매일
+하행,361,SRT,,20:32,20:51,매일
+하행,371,SRT,,22:28,22:47,매일
+상행,304,SRT,,6:21,6:02,매일
+상행,308,SRT,,7:40,7:21,매일
+상행,312,SRT,,8:28,8:09,매일
+상행,314,SRT,,8:52,8:29,금토일
+상행,318,SRT,,9:48,9:29,매일
+상행,324,SRT,,10:59,10:40,매일
+상행,326,SRT,,11:26,11:08,매일
+상행,330,SRT,,13:09,12:50,매일
+상행,334,SRT,13:47,13:38,13:19,매일
+상행,342,SRT,,15:17,14:59,매일
+상행,352,SRT,,16:52,16:34,매일
+상행,354,SRT,,17:36,17:18,매일
+상행,358,SRT,,18:31,18:08,금토일
+상행,360,SRT,,18:58,18:39,매일
+상행,362,SRT,,19:45,19:26,매일
+상행,364,SRT,,20:22,19:56,금토일
+상행,370,SRT,,21:23,21:05,매일
+상행,378,SRT,23:24,23:14,22:56,매일`;
+
+        // 2. 시간 및 날짜 유틸리티 함수
+        const timeToMinutes = (timeStr) => {
+            if (!timeStr || timeStr.trim() === '') return -1;
+            const [h, m] = timeStr.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const checkDays = (daysStr, dateStr) => {
+            if (!daysStr) return true;
+            const d = new Date(dateStr);
+            const dayIdx = d.getDay(); // 0:일, 1:월, ..., 6:토
+            const dayName = ['일', '월', '화', '수', '목', '금', '토'][dayIdx];
+            
+            if (daysStr.includes('매일')) return true;
+            if (daysStr.includes('월~목') && dayIdx >= 1 && dayIdx <= 4) return true;
+            if (daysStr.includes('월~금') && dayIdx >= 1 && dayIdx <= 5) return true;
+            if (daysStr.includes('금토일') && [5, 6, 0].includes(dayIdx)) return true;
+            if (daysStr.includes('토일') && [6, 0].includes(dayIdx)) return true;
+            if (daysStr.includes(dayName)) return true; // 특정 요일 직접 명시된 경우
+            
+            return false;
+        };
+
+        const parseCSV = (csvStr, defaultType) => {
+            const lines = csvStr.trim().split('\n');
+            const schedules = [];
+            // 두 번째 줄(인덱스 1)부터 데이터 파싱
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const cols = lines[i].split(',');
+                
+                let type = cols[2]?.trim();
+                // 종류가 비어있으면 파일 종류로 채움 (예: SRT 파일에 종류가 비어있는 경우)
+                if (!type) type = defaultType;
+
+                schedules.push({
+                    dir: cols[0]?.trim(),
+                    trainNo: cols[1]?.trim(),
+                    type: type,
+                    seodaegu: cols[3]?.trim(),
+                    dongdaegu: cols[4]?.trim(),
+                    gyeongju: cols[5]?.trim(),
+                    days: cols[6]?.trim()
+                });
+            }
+            return schedules;
+        };
+
+        // 3. 메인 React 컴포넌트
+        function App() {
+            const [dateStr, setDateStr] = React.useState(() => {
+                const d = new Date();
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            });
+            const [route, setRoute] = React.useState('daegu-gyeongju'); // 'daegu-gyeongju' 또는 'gyeongju-daegu'
+            const [allData, setAllData] = React.useState([]);
+
+            // 초기 데이터 로드
+            React.useEffect(() => {
+                const ktx = parseCSV(initialKtxCsv, 'KTX');
+                const srt = parseCSV(initialSrtCsv, 'SRT');
+                setAllData([...ktx, ...srt]);
+            }, []);
+
+            // 선택된 조건에 맞춰 데이터 필터링 및 정렬
+            const getFilteredSchedules = () => {
+                return allData.filter(s => {
+                    if (!checkDays(s.days, dateStr)) return false;
+
+                    const seoTime = timeToMinutes(s.seodaegu);
+                    const dongTime = timeToMinutes(s.dongdaegu);
+                    const gyTime = timeToMinutes(s.gyeongju);
+
+                    const hasDaegu = seoTime >= 0 || dongTime >= 0;
+                    const hasGyeongju = gyTime >= 0;
+
+                    if (!hasDaegu || !hasGyeongju) return false;
+
+                    const daeguMinTime = Math.min(...[seoTime, dongTime].filter(t => t >= 0));
+                    const daeguMaxTime = Math.max(...[seoTime, dongTime].filter(t => t >= 0));
+
+                    if (route === 'daegu-gyeongju') {
+                        // 대구 출발 -> 경주 도착 (대구 시간이 경주 시간보다 빨라야 함)
+                        return daeguMinTime < gyTime;
+                    } else {
+                        // 경주 출발 -> 대구 도착 (경주 시간이 대구 시간보다 빨라야 함)
+                        return gyTime < daeguMaxTime;
+                    }
+                }).map(s => {
+                    const seoTime = timeToMinutes(s.seodaegu);
+                    const dongTime = timeToMinutes(s.dongdaegu);
+                    const gyTime = timeToMinutes(s.gyeongju);
+
+                    let depStations = [];
+                    let arrStations = [];
+                    let sortTime = 0;
+
+                    if (route === 'daegu-gyeongju') {
+                        if (seoTime >= 0) depStations.push({ name: '서대구', time: s.seodaegu, t: seoTime });
+                        if (dongTime >= 0) depStations.push({ name: '동대구', time: s.dongdaegu, t: dongTime });
+                        depStations.sort((a, b) => a.t - b.t); // 시간순 정렬 (서대구, 동대구 묶음 표시를 위함)
+                        
+                        arrStations.push({ name: '경주', time: s.gyeongju, t: gyTime });
+                        sortTime = depStations[0].t;
+                    } else {
+                        depStations.push({ name: '경주', time: s.gyeongju, t: gyTime });
+                        
+                        if (seoTime >= 0) arrStations.push({ name: '서대구', time: s.seodaegu, t: seoTime });
+                        if (dongTime >= 0) arrStations.push({ name: '동대구', time: s.dongdaegu, t: dongTime });
+                        arrStations.sort((a, b) => a.t - b.t); // 도착역들도 시간순 정렬
+                        
+                        sortTime = gyTime;
+                    }
+
+                    return { ...s, depStations, arrStations, sortTime };
+                }).sort((a, b) => a.sortTime - b.sortTime); // 최종 출발시간 기준 전체 정렬
+            };
+
+            const displaySchedules = getFilteredSchedules();
+
+            return (
+                <div className="max-w-4xl mx-auto p-4 md:p-6 pb-20">
+                    {/* Header */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 text-center border border-slate-200">
+                        <h1 className="text-3xl font-bold text-slate-800 mb-2">🚄 대구-경주 열차 시간표</h1>
+                        <p className="text-slate-500">KTX 및 SRT 운행 일정을 확인해보세요.</p>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-slate-200">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            
+                            {/* Date Picker */}
+                            <div className="flex flex-col w-full md:w-1/3">
+                                <label className="text-sm font-semibold text-slate-600 mb-2">날짜 선택</label>
+                                <input 
+                                    type="date" 
+                                    value={dateStr}
+                                    onChange={(e) => setDateStr(e.target.value)}
+                                    className="p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                />
+                            </div>
+
+                            {/* Route Selector */}
+                            <div className="flex flex-col w-full md:w-2/3">
+                                <label className="text-sm font-semibold text-slate-600 mb-2">노선 선택</label>
+                                <div className="flex rounded-lg overflow-hidden border border-slate-300">
+                                    <button 
+                                        onClick={() => setRoute('daegu-gyeongju')}
+                                        className={`flex-1 py-3 text-center font-bold transition-all ${route === 'daegu-gyeongju' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+                                    >
+                                        대구 ➡️ 경주
+                                    </button>
+                                    <button 
+                                        onClick={() => setRoute('gyeongju-daegu')}
+                                        className={`flex-1 py-3 text-center font-bold transition-all ${route === 'gyeongju-daegu' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+                                    >
+                                        경주 ➡️ 대구
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Schedule Table */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-slate-50 border-b border-slate-200">
+                                        <th className="py-4 px-6 font-semibold text-slate-600">열차 정보</th>
+                                        <th className="py-4 px-6 font-semibold text-slate-600">출발역 및 시간</th>
+                                        <th className="py-4 px-6 font-semibold text-slate-600">도착역 및 시간</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {displaySchedules.length > 0 ? (
+                                        displaySchedules.map((item, idx) => (
+                                            <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                                <td className="py-4 px-6">
+                                                    <div className="flex flex-col">
+                                                        <span className={`text-xs font-bold px-2 py-1 rounded w-max mb-1 
+                                                            ${item.type?.includes('KTX') ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'}`}>
+                                                            {item.type}
+                                                        </span>
+                                                        <span className="font-semibold text-slate-700">{item.trainNo}호</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        {item.depStations.map((st, i) => (
+                                                            <div key={i} className="flex items-center w-32 justify-between">
+                                                                <span className="font-bold text-slate-800">{st.name}</span>
+                                                                <span className="text-slate-600 font-medium">{st.time}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        {item.arrStations.map((st, i) => (
+                                                            <div key={i} className="flex items-center w-32 justify-between">
+                                                                <span className="font-bold text-slate-800">{st.name}</span>
+                                                                <span className="text-slate-600 font-medium">{st.time}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="3" className="py-12 text-center text-slate-500">
+                                                해당 날짜에 운행하는 열차 일정이 없습니다.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
