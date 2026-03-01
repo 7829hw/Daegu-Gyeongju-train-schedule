@@ -31,7 +31,7 @@
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.write('<link rel="manifest" href="' + URL.createObjectURL(manifestBlob) + '">');
     </script>
-	
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React & ReactDOM -->
@@ -308,7 +308,8 @@
 
                     {/* Schedule Table */}
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div className="overflow-x-auto">
+                        {/* 데스크톱 및 태블릿용 테이블 화면 (모바일에서는 숨김) */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-slate-50 border-b border-slate-200">
@@ -361,6 +362,57 @@
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* 모바일용 카드 화면 (데스크톱에서는 숨김) */}
+                        <div className="block md:hidden">
+                            {displaySchedules.length > 0 ? (
+                                displaySchedules.map((item, idx) => (
+                                    <div key={idx} className="p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                        {/* 열차 정보 */}
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className={`text-xs font-bold px-2 py-1 rounded 
+                                                ${item.type?.includes('KTX') ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'}`}>
+                                                {item.type}
+                                            </span>
+                                            <span className="font-semibold text-slate-700">{item.trainNo}호</span>
+                                        </div>
+                                        
+                                        {/* 출발 -> 도착 정보 */}
+                                        <div className="flex items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                                            <div className="flex-1 flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-slate-400">출발</span>
+                                                {item.depStations.map((st, i) => (
+                                                    <div key={i} className="flex justify-between items-center pr-1 md:pr-2">
+                                                        <span className="font-bold text-slate-700 text-sm">{st.name}</span>
+                                                        <span className="text-slate-600 text-sm font-medium">{st.time}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            
+                                            <div className="px-3 text-slate-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                </svg>
+                                            </div>
+                                            
+                                            <div className="flex-1 flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-slate-400">도착</span>
+                                                {item.arrStations.map((st, i) => (
+                                                    <div key={i} className="flex justify-between items-center pl-1 md:pl-2">
+                                                        <span className="font-bold text-slate-700 text-sm">{st.name}</span>
+                                                        <span className="text-slate-600 text-sm font-medium">{st.time}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="py-12 text-center text-slate-500 text-sm">
+                                    해당 날짜에 운행하는 열차 일정이 없습니다.
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
