@@ -379,29 +379,30 @@
                                         </div>
                                         
                                         {/* 출발 -> 도착 정보 */}
-                                        <div className="flex items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                                            <div className="flex-1 flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-slate-400">출발</span>
+                                        <div className="flex items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                                            {/* 출발 정보 */}
+                                            <div className="flex-1 flex flex-col gap-3">
                                                 {item.depStations.map((st, i) => (
-                                                    <div key={i} className="flex justify-between items-center pr-1 md:pr-2">
-                                                        <span className="font-bold text-slate-700 text-sm">{st.name}</span>
-                                                        <span className="text-slate-600 text-sm font-medium">{st.time}</span>
+                                                    <div key={i} className="flex flex-col">
+                                                        <span className="text-xs font-medium text-slate-500 mb-0.5">{st.name}</span>
+                                                        <span className="text-xl font-extrabold text-slate-800 tracking-tight">{st.time}</span>
                                                     </div>
                                                 ))}
                                             </div>
                                             
-                                            <div className="px-3 text-slate-300">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            {/* 화살표 아이콘 */}
+                                            <div className="px-4 text-slate-300 flex items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                                 </svg>
                                             </div>
                                             
-                                            <div className="flex-1 flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-slate-400">도착</span>
+                                            {/* 도착 정보 */}
+                                            <div className="flex-1 flex flex-col gap-3 items-end text-right">
                                                 {item.arrStations.map((st, i) => (
-                                                    <div key={i} className="flex justify-between items-center pl-1 md:pl-2">
-                                                        <span className="font-bold text-slate-700 text-sm">{st.name}</span>
-                                                        <span className="text-slate-600 text-sm font-medium">{st.time}</span>
+                                                    <div key={i} className="flex flex-col items-end">
+                                                        <span className="text-xs font-medium text-slate-500 mb-0.5">{st.name}</span>
+                                                        <span className="text-xl font-extrabold text-slate-800 tracking-tight">{st.time}</span>
                                                     </div>
                                                 ))}
                                             </div>
